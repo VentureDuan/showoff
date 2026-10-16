@@ -1,0 +1,10 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { postUrl, formatDate } from '../lib/content';
+interface Props { posts: CollectionEntry<'posts'>[]; }
+const { posts } = Astro.props;
+---
+{posts.length ? posts.map(post => <a class="post" href={postUrl(post)}>
+  <div><h3>{post.data.title}</h3><p>{post.data.kind === 'note' ? '札记' : '文章'} · {post.data.tags.join(' / ')}{post.data.example && ' · 示例内容'}</p></div>
+  <span class="post-date">{post.data.dateLabel} {formatDate(post.data.date)} <span aria-hidden="true">↗</span></span>
+</a>) : <p class="empty">正在整理，稍后见。</p>}

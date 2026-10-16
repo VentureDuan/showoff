@@ -1,0 +1,5 @@
+---
+import Base from '../layouts/Base.astro';
+import { Content } from '../content/resume.md';
+---
+<Base title="简历 · 段锦涛"><article class="article resume"><a class="back" href="/">← 返回首页</a><div class="resume-actions"><span class="eyebrow">Go 后端工程师 + AI 应用落地</span><a class="button" href="/resume.md" download="段锦涛-简历.md">下载 Markdown ↓</a><button class="text-link" id="print">打印 / 保存 PDF ↗</button></div><div class="prose"><Content /></div></article><script>document.querySelector('#print')?.addEventListener('click', () => window.print());</script></Base>

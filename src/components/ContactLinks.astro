@@ -1,0 +1,46 @@
+---
+import { profile } from '../data/profile';
+import qr from '../content/微信二维码.jpg';
+import githubIcon from '../../public/icons/github.svg?raw';
+import wechatIcon from '../../public/icons/wechat.svg?raw';
+---
+<div class="contact-bottom contact-links">
+  <span class="email-control">
+    <a class="contact-action email-link" href={`mailto:${profile.email}`} aria-describedby="email-address">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" /></svg>
+      <span>邮件联系</span>
+    </a>
+    <span class="email-tooltip" id="email-address" role="tooltip">{profile.email}</span>
+  </span>
+  <div class="social-links">
+    <button class="contact-action" id="wechat-open" aria-label="打开微信二维码" aria-haspopup="dialog" aria-controls="wechat-dialog" title="微信">
+      <span class="contact-icon" aria-hidden="true" set:html={wechatIcon} /><span>微信联系</span>
+    </button>
+    <a class="contact-action" href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="访问我的 GitHub（新窗口）" title="GitHub">
+      <span class="contact-icon" aria-hidden="true" set:html={githubIcon} /><span>GitHub</span>
+    </a>
+  </div>
+</div>
+<dialog id="wechat-dialog" class="wechat-dialog" aria-labelledby="wechat-title" aria-describedby="wechat-description">
+  <div class="dialog-heading"><div><span class="eyebrow">保持联系</span><h2 id="wechat-title">微信联系</h2></div><button class="dialog-close" autofocus aria-label="关闭微信二维码">×</button></div>
+  <img class="wechat-qr" src={qr.src} width={qr.width} height={qr.height} alt="段锦涛的微信联系二维码" loading="lazy" />
+  <p id="wechat-description">使用微信扫一扫，添加好友。</p>
+</dialog>
+<script>
+  const emailControl = document.querySelector<HTMLElement>('.email-control');
+  emailControl?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') emailControl.classList.add('tooltip-dismissed');
+  });
+  emailControl?.addEventListener('pointerleave', () => emailControl.classList.remove('tooltip-dismissed'));
+  emailControl?.addEventListener('focusin', () => emailControl.classList.remove('tooltip-dismissed'));
+  const dialog = document.querySelector<HTMLDialogElement>('#wechat-dialog');
+  const opener = document.querySelector<HTMLButtonElement>('#wechat-open');
+  opener?.addEventListener('click', () => dialog?.showModal());
+  dialog?.querySelector('button.dialog-close')?.addEventListener('click', () => dialog.close());
+  dialog?.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  });
+  dialog?.addEventListener('close', () => opener?.focus());
+</script>

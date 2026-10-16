@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import '../styles/site.css';
+import '../styles/home-refinement.css';
+import { profile } from '../data/profile';
+interface Props { title?: string; description?: string; }
+const { title = '段锦涛 · 个人空间', description = profile.intro } = Astro.props;
+const path = Astro.url.pathname;
+const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
+---
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} /><meta name="color-scheme" content="light dark" />
+    <meta property="og:title" content={title} /><meta property="og:description" content={description} />
+    <meta property="og:type" content="website" /><meta property="og:locale" content="zh_CN" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <script is:inline>
+      try { if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">跳至正文</a>
+    <div class="shell">
+      <header class="top">
+        <a class="brand" href="/" aria-label="段锦涛的个人空间首页"><i></i>锦涛的空间<span class="brand-slash"> /</span></a>
+        <nav class="topnav" aria-label="主导航">
+          {[['/', '首页'], ['/projects/', '项目'], ['/blog/', '文章'], ['/notes/', '札记']].map(([href, label]) => <a href={href} aria-current={(href === '/' ? path === '/' : path.startsWith(href)) ? 'page' : undefined}>{label}</a>)}
+          <button id="theme" class="theme" aria-label="切换明暗模式" aria-pressed="false" title="切换明暗模式">◐</button>
+        </nav>
+      </header>
+      <main id="main"><slot /></main>
+      <footer><span>段锦涛 / 持续构建，持续记录。</span><span>© {new Date().getUTCFullYear()} · 以 Markdown 记录成长</span></footer>
+    </div>
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('#theme');
+      const sync = () => {
+        const dark = document.documentElement.dataset.theme === 'dark';
+        button?.setAttribute('aria-pressed', String(dark));
+        button?.setAttribute('aria-label', dark ? '切换到浅色模式' : '切换到深色模式');
+        if (button) button.textContent = dark ? '☀' : '◐';
+      };
+      button?.addEventListener('click', () => {
+        const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try { localStorage.setItem('theme', theme); } catch {}
+        sync();
+      });
+      sync();
+    </script>
+  </body>
+</html>

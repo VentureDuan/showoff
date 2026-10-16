@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { publishedPosts, postUrl, formatDate } from '../lib/content';
+interface Props { kind: 'article' | 'note'; }
+const { kind } = Astro.props;
+// Both sections share the same complete search corpus. With a query, all kinds are searched.
+const posts = await publishedPosts();
+const tags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+const title = kind === 'article' ? '文字，也是积累。' : '给成长，留个脚印。';
+---
+<Base title={`${kind === 'article' ? '文章' : '札记'} · 段锦涛`}>
+  <section class="library" data-library data-kind={kind}>
+    <div class="view-title"><h1>{title}</h1><span class="eyebrow">{kind === 'article' ? '技术文章' : '学习札记'}</span></div>
+    <p>{kind === 'article' ? '把实践中的问题讲清楚，把判断背后的证据留下来。' : '完整答案之前，也值得记下探索的过程。'}</p>
+    <label class="search-label" for="search">搜索文章与札记</label><input id="search" class="search" type="search" placeholder="搜索标题、正文、标签…" />
+    <p class="search-hint">输入关键词时同时搜索文章与札记。</p>
+    <div class="filter" aria-label="标签筛选"><button data-tag="" class="selected" aria-pressed="true">全部标签</button>{tags.map(tag => <button data-tag={tag} aria-pressed="false">{tag}</button>)}</div>
+    <p id="result-count" class="result-count" role="status" aria-live="polite"></p>
+    <div class="post-results">{posts.map(post => <a class="post" href={postUrl(post)} data-entry data-kind={post.data.kind} data-tags={JSON.stringify(post.data.tags)} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')} ${post.body ?? ''}`.toLocaleLowerCase('zh-CN')} hidden={post.data.kind !== kind}>
+      <div><div class="eyebrow">{post.data.kind === 'article' ? '文章' : '札记'} / {post.data.dateLabel} {formatDate(post.data.date)}{post.data.example && ' / 示例内容'}</div><h2>{post.data.title}</h2><p>{post.data.description}</p><div class="tags">{post.data.tags.map(tag => <span class="tag">{tag}</span>)}</div></div><span class="arrow" aria-hidden="true">↗</span>
+    </a>)}</div><p class="empty" id="no-results" hidden>没有找到匹配内容，试试其他关键词或标签。</p>
+  </section>
+  <script>
+    const library = document.querySelector<HTMLElement>('[data-library]');
+    const input = document.querySelector<HTMLInputElement>('#search');
+    const entries = [...document.querySelectorAll<HTMLElement>('[data-entry]')];
+    let selectedTag = '';
+    function updateResults() {
+      const query = (input?.value ?? '').trim().toLocaleLowerCase('zh-CN');
+      let count = 0;
+      entries.forEach(entry => {
+        const tags: string[] = JSON.parse(entry.dataset.tags ?? '[]');
+        const matches = (!query ? entry.dataset.kind === library?.dataset.kind : entry.dataset.search?.includes(query)) && (!selectedTag || tags.includes(selectedTag));
+        entry.hidden = !matches;
+        if (matches) count++;
+      });
+      const status = document.querySelector('#result-count');
+      if (status) status.textContent = `找到 ${count} 篇${query ? '内容（文章与札记）' : library?.dataset.kind === 'article' ? '文章' : '札记'}`;
+      const empty = document.querySelector<HTMLElement>('#no-results');
+      if (empty) empty.hidden = count > 0;
+    }
+    input?.addEventListener('input', updateResults);
+    document.querySelectorAll<HTMLButtonElement>('[data-tag]').forEach(button => button.addEventListener('click', () => {
+      selectedTag = button.dataset.tag ?? '';
+      document.querySelectorAll<HTMLButtonElement>('[data-tag]').forEach(other => {
+        const active = other === button;
+        other.classList.toggle('selected', active);
+        other.setAttribute('aria-pressed', String(active));
+      });
+      updateResults();
+    }));
+    updateResults();
+  </script>
+</Base>

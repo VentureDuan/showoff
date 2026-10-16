@@ -1,0 +1,12 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { publishedProjects } from '../../lib/content';
+export async function getStaticPaths() {
+  return (await publishedProjects()).map(project => ({ params: { id: project.id }, props: { project } }));
+}
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+---
+<Base title={`${project.data.title} · 段锦涛`} description={project.data.description}><article class="article"><a class="back" href="/projects/">← 返回项目</a><div class="eyebrow">项目实践 / {project.data.role}</div><h1>{project.data.title}</h1><p class="lead">{project.data.description}</p><div class="tags">{project.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>{headings.length > 0 && <details class="toc"><summary>项目目录</summary><nav aria-label="项目目录">{headings.filter(h => h.depth === 2).map(h => <a href={`#${h.slug}`}>{h.text}</a>)}</nav></details>}<div class="prose"><Content /></div><div class="project-links">{project.data.source && <a class="button" href={project.data.source} target="_blank" rel="noopener noreferrer">查看源码 ↗</a>}{project.data.demo && <a class="button" href={project.data.demo} target="_blank" rel="noopener noreferrer">查看演示 ↗</a>}</div></article></Base>

@@ -1,0 +1,23 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { publishedPosts, formatDate } from '../../lib/content';
+export async function getStaticPaths() {
+  return (await publishedPosts()).map(post => ({ params: { id: post.id }, props: { post } }));
+}
+interface Props { post: CollectionEntry<'posts'>; }
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+<Base title={`${post.data.title} · 段锦涛`} description={post.data.description}>
+  <article class="article">
+    <a class="back" href={post.data.kind === 'article' ? '/blog/' : '/notes/'}>← 返回{post.data.kind === 'article' ? '文章' : '札记'}</a>
+    <div class="eyebrow">{post.data.kind === 'article' ? '技术文章' : '学习札记'} / {post.data.tags.join(' / ')}</div>
+    <h1>{post.data.title}</h1><div class="meta">{post.data.dateLabel}于 <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time> · 段锦涛</div>
+    <p class="lead">{post.data.description}</p>
+    {post.data.example && <aside class="example-notice">这是用于展示阅读效果的示例内容，不代表真实项目复盘。后续可直接替换为自己的 Markdown 文章。</aside>}
+    {post.data.legacy && <aside class="example-notice">这是一篇迁移的历史笔记，保留了当时的理解与代码，尚未完成技术校对。收录日期不代表原始创作日期。</aside>}
+    {headings.length > 0 && <details class="toc" open><summary>文章目录</summary><nav aria-label="文章目录">{headings.filter(h => h.depth <= 3).map(h => <a href={`#${h.slug}`} class:list={{ 'toc-sub': h.depth === 3 }}>{h.text}</a>)}</nav></details>}
+    <div class="prose"><Content /></div><div class="tags">{post.data.tags.map(tag => <span class="tag">{tag}</span>)}</div>
+  </article>
+</Base>
