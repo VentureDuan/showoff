@@ -76,6 +76,11 @@ npm run build
 ## 部署
 
 构建产物为 `dist/`，可以放在静态托管服务。当前路由按域名根路径部署；不支持直接放到 `/showoff/` 等子路径。
-部署前设置环境变量 `SITE_URL` 为最终完整站点地址，生成 canonical 链接。尚未选择托管平台或部署。
+使用 ChatGPT Sites 托管，站点配置在 `.openai/hosting.json`，静态目录为 `dist`。
+平台地址：<https://venture-duan.taotao-today.chatgpt.site>。
+
+`astro.config.mjs` 默认使用该地址生成 canonical 链接；更换域名时，可通过构建环境变量 `SITE_URL` 覆盖。
+本地修改不会自动上线：运行检查和构建后，通过 Sites 同步源码、保存版本并部署。
+部署包仅包含静态产物，不包含 `prototype/`、`.scratch/` 等源码目录。
 
 头像以姓名首字展示；简历支持 Markdown 下载与浏览器打印。没有独立 PDF 文件，PDF 可通过打印另存。
