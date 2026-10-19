@@ -1,0 +1,11 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ProjectStoryDetail from '../../../components/ProjectStoryDetail.astro';
+import { projectStories, type ProjectStory } from '../../../data/project-stories';
+export function getStaticPaths() {
+  return projectStories.map((project, index) => ({ params: { id: project.id }, props: { project, next: projectStories[(index + 1) % projectStories.length] } }));
+}
+interface Props { project: ProjectStory; next: ProjectStory; }
+const { project, next } = Astro.props;
+---
+<Base title={`${project.title} · 预览`} description={project.intro} noindex><ProjectStoryDetail project={project} next={next} preview /></Base>

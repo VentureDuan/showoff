@@ -1,0 +1,26 @@
+---
+import type { TechnicalChart } from '../data/project-technical';
+interface Props { chart: TechnicalChart; number: string; }
+const { chart, number } = Astro.props;
+const kindLabels = { architecture: '架构与数据流', sequence: '交互时序', branches: '条件与分支' };
+---
+<figure class:list={['technical-figure', `technical-${chart.type}`]}>
+  <figcaption><span class="technical-figure-index">FIG. {number}</span><strong>{chart.title}</strong><span class="technical-chart-kind">{kindLabels[chart.type]}</span></figcaption>
+  {chart.type === 'architecture' && <>
+    <div class="architecture-lanes" style={`--lane-count:${chart.lanes.length}`}>
+      {chart.lanes.map((lane, index) => <section class="architecture-lane" aria-label={lane.title}><header><span>{lane.subtitle}</span><h4>{lane.title}</h4></header><div class="architecture-nodes">{lane.nodes.map(node => <div class:list={['technical-node', { 'technical-node-accent': node.accent }]}><strong>{node.title}</strong><p>{node.detail}</p></div>)}</div>{index < chart.lanes.length - 1 && <span class="architecture-arrow" aria-hidden="true">→</span>}</section>)}
+    </div>
+    <ol class="architecture-links">{chart.links.map(link => <li>{link}</li>)}</ol>
+  </>}
+  {chart.type === 'sequence' && <><p class="sequence-hint">窄屏可横向滚动查看完整时序，也可展开下方步骤。</p><div class="sequence-scroll" tabindex="0" role="region" aria-label={`${chart.title}，窄屏可横向滚动`}>
+    <div class="sequence-chart" style={`--actor-count:${chart.actors.length}`}>
+      <div class="sequence-actors">{chart.actors.map(actor => <div>{actor}</div>)}</div>
+      <div class="sequence-body">
+        <div class="sequence-lifelines" aria-hidden="true">{chart.actors.map(() => <span></span>)}</div>
+        {chart.steps.map((step, i) => <div class="sequence-row">{step.note || step.from === step.to ? <div class="sequence-local" style={`grid-column:${step.from + 1}`}><span>{String(i + 1).padStart(2, '0')}</span>{step.label}</div> : <div class:list={['sequence-message', { 'message-reverse': step.to < step.from }]} style={`grid-column:${Math.min(step.from, step.to) + 1} / ${Math.max(step.from, step.to) + 2};--message-span:${Math.abs(step.to - step.from) + 1}`}><div class="sequence-message-label"><span>{String(i + 1).padStart(2, '0')}</span>{step.label}</div><div class="sequence-arrow" aria-hidden="true"></div><span class="sr-readable">{chart.actors[step.from]} → {chart.actors[step.to]}</span></div>}</div>)}
+      </div>
+    </div>
+  </div><details class="sequence-readable"><summary>按步骤阅读交互过程</summary><ol>{chart.steps.map(step => <li><strong>{chart.actors[step.from]}{step.from !== step.to && ` → ${chart.actors[step.to]}`}</strong><span>{step.label}</span></li>)}</ol></details></>}
+  {chart.type === 'branches' && <div class="branch-chart"><div class="branch-start">{chart.start}</div><div class="branch-connector" aria-hidden="true">↓</div><div class="branch-options">{chart.branches.map((branch, i) => <div class="branch-option"><span class="branch-condition"><b>{String(i + 1).padStart(2, '0')}</b>{branch.condition}</span><div class="branch-outcome"><span aria-hidden="true">↓</span><strong>{branch.result}</strong><p>{branch.detail}</p></div></div>)}</div></div>}
+  <p class="technical-figure-note">{chart.note}</p>
+</figure>

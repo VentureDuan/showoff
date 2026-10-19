@@ -1,0 +1,22 @@
+---
+import ProjectDiagram from './ProjectDiagram.astro';
+import ProjectTechnicalStory from './ProjectTechnicalStory.astro';
+import type { ProjectStory } from '../data/project-stories';
+import '../styles/project-preview.css';
+import '../styles/project-technical.css';
+interface Props { project: ProjectStory; next: ProjectStory; preview?: boolean; }
+const { project, next, preview = false } = Astro.props;
+const basePath = preview ? '/preview/projects/' : '/projects/';
+---
+<article class="project-preview">
+  {preview && <div class="preview-bar"><span><i aria-hidden="true"></i>项目展示 / 预览</span><a href={`/projects/${project.id}/`}>查看正式项目页 ↗</a></div>}
+  <header class="project-detail-hero" id="背景与问题"><a class="preview-back" href={basePath}>← 返回项目</a><div class="eyebrow">{project.category} / {project.title}</div><h1>{project.headline}</h1><p>{project.intro}</p><div class="detail-meta legacy-project-anchor" id="我的职责"><span>我的贡献</span><strong>{project.contribution}</strong></div><div class="tags">{project.tags.map(tag => <span class="tag">{tag}</span>)}</div></header>
+  <section class="detail-visual legacy-project-anchor" id="关键方案" aria-label="项目核心方案图解"><div class="visual-label"><span>方案图解 / 从问题到机制</span><span>职责与流程示意</span></div><ProjectDiagram kind={project.kind} /></section>
+  <div class="story-brief"><p>{project.takeaway}</p></div>
+  <div id="结果与复盘" class="legacy-project-anchor"><ProjectTechnicalStory projectId={project.id} /></div>
+  {project.kind === 'delivery' && <section class="technical-result" aria-label="内容分发优化结果"><h2 class="detail-result-heading">交付结果：可用与加速分别观察</h2>
+    <div class="delta-sample"><span class="diagram-kicker">一次代表性差量对比 / 同一游戏包</span><div class="delta-row"><span>原始游戏包</span><div class="delta-track"><span style="width:100%"></span></div><b>200 GB</b></div><div class="delta-row"><span>文件级差量</span><div class="delta-track"><span style="width:85%"></span></div><b>170 GB</b></div><div class="delta-row"><span>CDC 差量</span><div class="delta-track"><span style="width:7.5%"></span></div><b>15 GB</b></div><p class="metric-note">近似数值；单次代表性样本，不代表所有版本的固定差量比例。</p></div>
+    <div class="delivery-metrics"><div><strong>70<small>分钟内</small></strong><p>超过 98% 机器部署可用</p></div><div><strong>140<small>分钟内</small></strong><p>90% 机器加速完成</p></div><div><strong>160<small>分钟内</small></strong><p>99% 机器加速完成</p></div></div><p class="metric-note">数据经脱敏、取整，基于多轮压测典型水平的回忆；部署可用与加速完成分别统计，加速受限速策略影响。</p>
+  </section>}
+  <nav class="case-next" aria-label="继续浏览项目"><p>继续探索 / 下一个项目</p><a href={`${basePath}${next.id}/`}>{next.title}<span aria-hidden="true">↗</span></a></nav>
+</article>

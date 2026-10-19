@@ -1,0 +1,22 @@
+---
+import ProjectDiagram from './ProjectDiagram.astro';
+import { projectStories, type ProjectStory } from '../data/project-stories';
+import { technicalChapters } from '../data/project-technical';
+import '../styles/project-preview.css';
+import '../styles/project-technical.css';
+interface Props { preview?: boolean; projects?: ProjectStory[]; title?: string; intro?: string; }
+const { preview = false, projects = projectStories, title = '用作品，\n回答问题。', intro = '从 AI 调查工具到云游戏基础能力，记录我如何建模问题、验证方案，并在真实约束中做出取舍。' } = Astro.props;
+const basePath = preview ? '/preview/projects/' : '/projects/';
+---
+<div class="project-preview">
+  {preview && <div class="preview-bar"><span><i aria-hidden="true"></i>项目展示 / 预览</span><a href="/projects/">查看正式项目页 ↗</a></div>}
+  <header class="preview-intro"><div><span class="eyebrow">SELECTED WORK / 工程实践</span><h1 style="white-space:pre-line">{title}</h1></div><p>{intro}</p></header>
+  <div class="preview-count"><strong>01 — {String(projects.length).padStart(2, '0')}</strong><span>AI 应用与系统工程</span></div>
+  <div class="showcase-list">
+    {projects.map((project, i) => <article class="showcase">
+      <div class="showcase-copy"><span class="showcase-number">{String(i + 1).padStart(2, '0')} / {project.category}</span><h2>{project.title}</h2><p>{project.question}</p><div class="showcase-role">我的贡献<strong>{project.contribution}</strong></div><div class="tags">{project.tags.map(tag => <span class="tag">{tag}</span>)}</div><div class="showcase-topics">{technicalChapters[project.id]?.map(chapter => <a href={`${basePath}${project.id}/#${chapter.id}`}>{chapter.title.split('：')[0]}</a>)}</div><a class="showcase-link" href={`${basePath}${project.id}/`}>查看架构与技术细节 <span aria-hidden="true">↗</span></a></div>
+      <div class="showcase-visual"><ProjectDiagram kind={project.kind} compact /></div>
+    </article>)}
+  </div>
+  <p class="preview-footnote">图解按实际工程实践脱敏整理。进入详情查看架构、交互时序、失败分支与设计取舍。</p>
+</div>

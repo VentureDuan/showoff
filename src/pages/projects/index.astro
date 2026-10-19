@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { publishedProjects, projectUrl } from '../../lib/content';
-const projects = await publishedProjects();
+import ProjectStoriesIndex from '../../components/ProjectStoriesIndex.astro';
 ---
-<Base title="项目 · 段锦涛"><div class="view-title"><h1>用作品，回答问题。</h1><span class="eyebrow">工程实践</span></div><p>从后端系统到 AI 工具，记录职责、方案与取舍。</p><div class="project-grid">{projects.map((project, i) => <a class="card link project-summary" href={projectUrl(project)}><div class="section-label"><span>0{i + 1} / {project.data.role}</span><span class="arrow">↗</span></div><h2>{project.data.title}</h2><p>{project.data.description}</p><div class="tags">{project.data.tags.map(tag => <span class="tag">{tag}</span>)}</div></a>)}</div></Base>
+<Base title="项目 · 段锦涛" description="AI 应用与云游戏系统工程实践：架构、交互时序、设计取舍与真实案例。"><ProjectStoriesIndex /></Base>

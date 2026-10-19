@@ -1,0 +1,11 @@
+---
+import TechnicalFigure from './TechnicalFigure.astro';
+import { technicalChapters } from '../data/project-technical';
+interface Props { projectId: string; }
+const { projectId } = Astro.props;
+const chapters = technicalChapters[projectId] ?? [];
+---
+<div class="technical-story">
+  <aside class="story-toc"><div class="story-toc-heading"><span class="eyebrow">项目展开</span><strong>沿着这条线，讲清设计。</strong></div><nav aria-label="项目技术讲解目录">{chapters.map((chapter, i) => <a href={`#${chapter.id}`}><span>{String(i + 1).padStart(2, '0')}</span><span>{chapter.title.split('：')[0]}</span></a>)}</nav><p>架构 · 时序 · 取舍 · 证据</p></aside>
+  <div class="technical-chapters">{chapters.map((chapter, i) => <section id={chapter.id} class="technical-chapter"><header class="technical-chapter-heading"><span class="technical-section-index">{String(i + 1).padStart(2, '0')}</span><div><h2>{chapter.title}</h2><p>{chapter.summary}</p></div></header><TechnicalFigure chart={chapter.chart} number={String(i + 1).padStart(2, '0')} /><div class="technical-prose">{chapter.paragraphs.map(paragraph => <p>{paragraph}</p>)}</div>{chapter.table && <div class="technical-table-wrap" tabindex="0" role="region" aria-label={`${chapter.title}方案对比表`}><table><caption class="sr-readable">{chapter.title}：方案与判断</caption><thead><tr>{chapter.table.headers.map(header => <th scope="col">{header}</th>)}</tr></thead><tbody>{chapter.table.rows.map(row => <tr>{row.map((cell, cellIndex) => cellIndex === 0 ? <th scope="row">{cell}</th> : <td>{cell}</td>)}</tr>)}</tbody></table></div>}<aside class="technical-conclusion"><span>设计判断</span><p>{chapter.conclusion}</p></aside></section>)}</div>
+</div>

@@ -1,0 +1,43 @@
+---
+import type { DiagramKind } from '../data/project-stories';
+interface Props { kind: DiagramKind; compact?: boolean; }
+const { kind, compact = false } = Astro.props;
+---
+<div class:list={['project-diagram', `diagram-${kind}`, { 'is-compact': compact }]}>
+  {kind === 'evidence' && <>
+    <div class="diagram-heading"><span>分散的线索</span><span>可复核的判断</span></div>
+    <div class="evidence-map">
+      <div class="evidence-sources"><span>实例日志 <b>↗</b></span><span>任务 / 数据库 <b>↗</b></span><span>运行版本 / 代码 <b>↗</b></span></div>
+      <div class="diagram-hub"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="14" r="8"/><path d="m20 20 7 7M10 14h8m-4-4v8"/></svg><strong>领域 Skills</strong><small>关联 · 比较 · 下钻</small></div>
+      <div class="evidence-result"><span class="diagram-kicker">调查交付</span><strong>结论与证据</strong><span>未确认项 · 下一步</span><i aria-hidden="true"></i><small>原始故障 ≠ 次生报错</small></div>
+    </div>
+    <p class="diagram-caption">按任务与时间关联事实，让每个结论有所依据。</p>
+  </>}
+  {kind === 'analysis' && <>
+    <div class="diagram-heading"><span>告警 / 业务事实</span><span>业务规则 / 解释</span></div>
+    <div class="analysis-facts"><div><span class="fact-dot"></span>基础实例充足</div><div><span class="fact-dot outlined"></span>预启动失败</div><div><span class="fact-dot outlined"></span>集中于灰度实例</div></div>
+    <div class="analysis-rule"><span class="diagram-kicker">分配前置条件</span><strong>该业务需要预启动成功</strong><span class="rule-arrow" aria-hidden="true">↓</span><p>基础可用 <b>≠</b> 业务可分配</p></div>
+    <p class="diagram-caption">程序准备事实，LLM 结合规则解释，人员决定止损。</p>
+  </>}
+  {kind === 'delivery' && <>
+    <div class="diagram-heading"><span>开服关键路径</span><span>部署与加速解耦</span></div>
+    <div class="delivery-stages"><span><small>01</small>装载</span><b aria-hidden="true">→</b><span><small>02</small>分发</span><b aria-hidden="true">→</b><span class="stage-ready"><small>03</small>部署</span></div>
+    <div class="delivery-split"><div class="ready-note"><span class="fact-dot"></span><strong>实例可用</strong><small>从 L3 网络盘启动</small></div><div class="acceleration"><span>后置加速 ↗</span><div><b>L3</b><span>网络盘</span><b>L2</b><span>SSD</span><b>L1</b><span>内存盘</span></div></div></div>
+    <p class="diagram-caption">加速后置并限速，优先保障可用实例数量。</p>
+  </>}
+  {kind === 'tasks' && <>
+    <div class="diagram-heading"><span>执行前隔离</span><span>满足条件再执行</span></div>
+    <ol class="task-track"><li><span>01</span><strong>抢锁</strong><small>CGInstance</small></li><li><span>02</span><strong>下调度</strong><small>同步确认</small></li><li class="task-wait"><span>03</span><strong>等待空闲</strong><small>用户退出</small></li><li><span>04</span><strong>执行任务</strong><small>activity</small></li></ol>
+    <div class="task-policy"><span>失败策略</span><strong>自动重试</strong><span>或</span><strong>锁定待处理</strong></div>
+    <p class="diagram-caption">执行数据持久化，任务不绑定单个 worker 进程。</p>
+  </>}
+  {kind === 'agents' && <>
+    <div class="diagram-heading"><span>实例侧 Agent</span><span>统一实例业务状态</span></div>
+    <div class="agent-services"><span>CGVmAgent<small>云游戏业务</small></span><span>lightstreamer<small>串流</small></span><span>CGMetricsAgent<small>指标采集</small></span></div>
+    <div class="agent-spine" aria-hidden="true">↓</div>
+    <div class="agent-manager"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="5" width="22" height="22" rx="5"/><path d="M11 12h10m-10 5h10m-10 5h4"/></svg><div><strong>CGInstanceAgent</strong><small>实例内服务 · 生命周期与状态管理</small></div></div>
+    <div class="agent-spine" aria-hidden="true">↓</div>
+    <div class="agent-cloud"><span>云端 / Union 服务</span><strong>CGInstanceMorintor</strong><small>接收实例状态与心跳</small></div>
+    <p class="diagram-caption">变化上报 + 失败重试 + 每 10 分钟兜底。</p>
+  </>}
+</div>

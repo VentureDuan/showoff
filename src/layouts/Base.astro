@@ -3,16 +3,17 @@ import '../styles/global.css';
 import '../styles/site.css';
 import '../styles/home-refinement.css';
 import { profile } from '../data/profile';
-interface Props { title?: string; description?: string; }
-const { title = '段锦涛 · 个人空间', description = profile.intro } = Astro.props;
+interface Props { title?: string; description?: string; noindex?: boolean; }
+const { title = '段锦涛 · 个人空间', description = profile.intro, noindex = false } = Astro.props;
 const path = Astro.url.pathname;
-const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
+const canonical = Astro.site && !noindex ? new URL(path, Astro.site).href : undefined;
 ---
 <!doctype html>
 <html lang="zh-CN" data-theme="light">
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} /><meta name="color-scheme" content="light dark" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={title} /><meta property="og:description" content={description} />
     <meta property="og:type" content="website" /><meta property="og:locale" content="zh_CN" />
     {canonical && <link rel="canonical" href={canonical} />}

@@ -19,10 +19,15 @@ npm run preview
 ## 内容维护
 
 - `src/data/profile.ts`：个人介绍、经历、技能与联系方式。
-- `src/content/projects/*.md`：项目详情；标题、简介、职责、标签、排序写在 frontmatter。
+- `src/data/project-stories.ts`：五项项目的展示顺序、简介、职责与标签；首页、列表、正式详情和预览共用。
+- `src/data/project-technical.ts`：项目技术章节、架构/时序/分支图数据与设计取舍。
+- `src/content/projects/*.md`：保留原有素材；未纳入技术案例的 Markdown 项目仍生成兼容详情，`cloud-gaming` 入口展示三个工程案例与原概述。已纳入的项目以 `project-stories.ts` 和 `project-technical.ts` 为展示来源。
 - `src/content/posts/**/*.md`：文章与札记，可使用子目录；正文支持 Markdown、代码高亮，目录自动生成。
 - `src/content/resume.md`：网页简历。修改后运行 `npm run build`，下载版本会自动同步。
 - `prototype/`：保留的设计探索，`npm run prototype`。不属于正式构建产物。
+
+项目正式入口为 `/projects/`，预览入口 `/preview/projects/` 共用内容和组件，预览页设置 `noindex`。
+详情中的技术图以完整静态图展示，无播放或轮播控件；窄屏时序图支持横向滚动与展开文字步骤，图解与正文不依赖 JavaScript。
 
 文章示例：
 

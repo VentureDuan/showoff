@@ -2,11 +2,14 @@
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import ContactLinks from '../components/ContactLinks.astro';
+import ProjectDiagram from '../components/ProjectDiagram.astro';
+import { projectStories } from '../data/project-stories';
+import '../styles/project-preview.css';
+import '../styles/project-technical.css';
 import { profile } from '../data/profile';
-import { publishedPosts, publishedProjects, projectUrl } from '../lib/content';
+import { publishedPosts } from '../lib/content';
 const posts = await publishedPosts();
-const projects = await publishedProjects();
-const primary = projects[0];
+const primary = projectStories[0];
 const articles = posts.filter(p => p.data.kind === 'article');
 const selected = articles.filter(p => p.data.featured);
 const notes = posts.filter(p => p.data.kind === 'note');
@@ -30,7 +33,7 @@ const notes = posts.filter(p => p.data.kind === 'note');
         <a href="/notes/"><span class="focus-index">03</span><span><strong>持续学习</strong><small>技术文章 · 札记 · 阶段思考</small></span><span aria-hidden="true">↗</span></a>
       </nav>
     </section>
-    {primary && <a class="card project link" href={projectUrl(primary)}><div class="section-label"><span>01 / 代表项目</span><span class="arrow" aria-hidden="true">↗</span></div><h2>让排障，<br />从线索走向证据。</h2><p>{primary.data.title}</p><p>{primary.data.description}</p><div class="project-art" aria-label="工作流程：澄清目标、证据取证、研发交接"><span class="node">澄清目标</span><span class="connector"></span><span class="node primary">证据取证</span><span class="connector"></span><span class="node">研发交接</span></div><div class="project-foot"><div class="tags">{primary.data.tags.slice(0,3).map(tag => <span class="tag">{tag}</span>)}</div><span>查看项目故事 →</span></div></a>}
+    {primary && <a class="card project link" href={`/projects/${primary.id}/`}><div class="section-label"><span>01 / 代表项目</span><span class="arrow" aria-hidden="true">↗</span></div><h2>让排障，<br />从线索走向证据。</h2><p>{primary.title}</p><p>{primary.intro}</p><div class="home-project-diagram"><ProjectDiagram kind={primary.kind} compact /></div><div class="project-foot"><div class="tags">{primary.tags.slice(0,3).map(tag => <span class="tag">{tag}</span>)}</div><span>查看项目故事 →</span></div></a>}
     <section class="card work"><div class="section-label"><span>02 / 工作经历</span><a href="/resume/">完整简历 ↗</a></div><div class="timeline">{profile.experience.slice(0,2).map(job => <div class="job"><small>{job.date}</small><h3>{job.role}</h3><p>{job.company}</p><p class="job-description">{job.description}</p></div>)}</div></section>
     <section class="card skills"><div class="section-label"><span>03 / 技术与实践</span><span aria-hidden="true">↗</span></div><h2>工具服务于问题，<br />实践形成理解。</h2><div class="tags">{profile.skills.map(skill => <span class="tag">{skill}</span>)}</div></section>
     <section class="card writing"><div class="section-label"><span>04 / 精选文章</span><a href="/blog/">全部文章 ↗</a></div><PostList posts={(selected.length ? selected : articles).slice(0,3)} /></section>
