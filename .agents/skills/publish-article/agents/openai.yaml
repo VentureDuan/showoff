@@ -1,0 +1,6 @@
+interface:
+  display_name: "发布文章到个人网站"
+  short_description: "提供文章路径，接入网站并完成构建、发布和线上验证"
+  default_prompt: "使用 $publish-article 将我指定路径的文章发布到个人网站。"
+policy:
+  allow_implicit_invocation: false

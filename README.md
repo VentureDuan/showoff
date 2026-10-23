@@ -18,6 +18,14 @@ npm run preview
 
 ## 内容维护
 
+在本项目 Codex 会话中，可显式调用项目技能发布文章：
+
+```text
+$publish-article 帮我发布 "D:\workspace\blog\文章.md"
+```
+
+技能位于 `.agents/skills/publish-article/`，会保留原文、接入文章、检查构建、发布到腾讯云个人网站并验证线上结果。仅预览时明确说明“只做本地预览，不发布”。若当前会话尚未发现新技能，在本项目新建会话后调用，也可直接指定 `.agents/skills/publish-article/SKILL.md`。部署依赖本机可用的 `tencent-ubuntu` SSH 配置；不会自动提交或推送 Git。
+
 - `src/data/profile.ts`：个人介绍、经历、技能与联系方式。
 - `src/data/project-stories.ts`：五项项目的展示顺序、简介、职责与标签；首页、列表、正式详情和预览共用。
 - `src/data/project-technical.ts`：项目技术章节、架构/时序/分支图数据与设计取舍。
